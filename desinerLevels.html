@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+		<!-- Compiled and minified JavaScript -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+		<title>Дезайнер уровней</title>
+		<meta charset='utf-8'/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<style>
+			body{
+				padding:3px;
+				margin:3px;
+				overflow-x:hidden;
+			}
+			select{
+				display:block
+			}
+		</style>
+		
+    </head>
+    <body>
+		<div>
+			<div class="input-field col s6">
+			  <input id="name" type="text" class="validate">
+			  <label for="name">Имя</label>
+			</div>
+		</div>
+		<div>
+			<span>Количество монстров:</span>
+			<select id=countMonsters></select>
+		</div>
+		<div>
+			<span>Количество слепых монстров:</span>
+			<select id=countBlendMonsters></select>
+		</div>
+		<div id=timeMoveMonsters>
+			<span>Время передвижения монстров:</span>
+			<blockquote>
+				<div>
+					<span>После вылазки:</span>
+					<select id=timeMoveMonstersOne></select>
+					
+					<span>До нападения:</span>
+					<select id=timeMoveMonstersTwo></select>
+				</div>
+			</blockquote>
+		</div>
+		
+		<div id=durabilityTools>
+			
+			<span>Прочность инструментов:</span>
+			<blockquote>
+				<div>
+					<span>Зарядка фонарика:</span>
+					<select id=durabilityToolsF></select>
+				</div>
+				<div>
+					<span>Зарядка телефона:</span>
+					<select id=durabilityToolsP></select>
+				</div>
+				<div>
+					<span>Количество аудио:</span>
+					<select id=durabilityToolsA></select>
+				</div>
+				<div>
+					<span>Длительность видео:</span>
+					<select id=durabilityToolsV></select>
+				</div>
+			</blockquote>
+		</div>
+		<div>
+			<span>Шанс того, что лифт сломается:</span>
+			<select id=changeCrackLift></select>
+		</div>
+		<div>
+			<span>Время до нападения в сломанном лифте:</span>
+			<select id=timeScreamInCrackLift></select>
+		</div>
+		<div>
+			<span>Количество монстров в сломанном лифте:</span>
+			<select id=valueMonstersInCrackLift></select>
+		</div>
+		<div>
+			<span>Время до нападения в машине для починки:</span>
+			<select id=timeScreamInMachine></select>
+		</div>
+		<br/>
+		<a class="waves-effect waves-light btn" id='gen'>Сгенерировать</a>
+		<script>
+			
+			let name=document.getElementById('name')
+			let countMonsters=document.getElementById('countMonsters')
+			let countBlendMonsters=document.getElementById('countBlendMonsters')
+			let timeMoveMonstersOne=document.getElementById('timeMoveMonstersOne')
+			let timeMoveMonstersTwo=document.getElementById('timeMoveMonstersTwo')
+			let durabilityToolsF=document.getElementById('durabilityToolsF')
+			let durabilityToolsP=document.getElementById('durabilityToolsP')
+			let durabilityToolsA=document.getElementById('durabilityToolsA')
+			let durabilityToolsV=document.getElementById('durabilityToolsV')
+			let changeCrackLift=document.getElementById('changeCrackLift')
+			let timeScreamInCrackLift=document.getElementById('timeScreamInCrackLift')
+			let valueMonstersInCrackLift=document.getElementById('valueMonstersInCrackLift')
+			let timeScreamInMachine=document.getElementById('timeScreamInMachine')
+			let gen=document.getElementById('gen');
+			function addOption(min, max, id, time=false, percent=false){
+				
+				for(;min<=max; min++){
+					let option=document.createElement('option')
+					option.value=min;
+					
+					option.innerText=min
+					if(time)
+						option.innerText+=' сек.'
+					else if(percent)
+						option.innerText+=' %'
+					id.appendChild(option)
+				}
+				
+			}
+			addOption(1, 4, countMonsters)
+			addOption(0, 2, countBlendMonsters)
+			addOption(4, 20, timeMoveMonstersOne, true)
+			addOption(4, 30, timeMoveMonstersTwo, true)
+			addOption(5, 25, durabilityToolsF)
+			addOption(5, 25, durabilityToolsP)
+			addOption(5, 25, durabilityToolsA)
+			addOption(13, 25, durabilityToolsV)
+			addOption(5, 35, changeCrackLift, false, true)
+			addOption(4, 8, timeScreamInCrackLift, true)
+			addOption(10, 30, valueMonstersInCrackLift)
+			addOption(8, 35, timeScreamInMachine, true)
+			let obj={};
+			gen.onclick=()=>{
+				obj.name=name.value;
+				obj.valueMonsters=parseInt(countMonsters.value);
+				obj.valueBlendMonsters=parseInt(countBlendMonsters.value);
+				obj.timesMoveMonsters=[
+					parseInt(timeMoveMonstersOne.value)*1000,
+					parseInt(timeMoveMonstersTwo.value)*1000
+				];
+				obj.durabilityTools={
+					flashlight:parseInt(durabilityToolsF.value),
+					phone:parseInt(durabilityToolsP.value),
+					video:parseInt(durabilityToolsV.value),
+					audio:parseInt(durabilityToolsA.value)
+				};
+				obj.changeCrackLift=parseInt(changeCrackLift.value);
+				obj.first=false;
+				obj.timeScreamInCrackLift=parseInt(timeScreamInCrackLift.value)*1000;
+				obj.timeScreamInMachine=parseInt(timeScreamInMachine.value)*1000;
+				obj.valueMonstersInCrackLift=parseInt(valueMonstersInCrackLift.value);
+				let blob=new Blob([JSON.stringify(obj)], {text:'test/json'});
+				let a=document.createElement('a');
+				a.href=URL.createObjectURL(blob)
+				a.download='level.json';
+				document.body.appendChild(a)
+				a.click()
+			}
+		</script>
+    </body>
+  </html>
+        
